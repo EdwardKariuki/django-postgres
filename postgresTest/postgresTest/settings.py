@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import environ
+import os
 
 from pathlib import Path
 
@@ -16,14 +18,22 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+environ.Env.read_env()
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*yq95v&sfs5i$=^^-jhg(dfb-ebm=wsy59s7+djs(n)_@_jv_*'
+# SECRET_KEY = 'django-insecure-*yq95v&sfs5i$=^^-jhg(dfb-ebm=wsy59s7+djs(n)_@_jv_*'
+SECRET_KEY = env("SECRET_KEY", default="fallback-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = []
 
@@ -73,13 +83,33 @@ WSGI_APPLICATION = 'postgresTest.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+## Default SQLite database
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
+## PostgreSQL database
+print(f"SECRET_KEY: {env('SECRET_KEY')}")
+print(f"DB_NAME: {env('DB_NAME')}")
+print(f"DB_USER: {env('DB_USER')}")
+print(f"DB_PASSWORD: {env('DB_PASSWORD')}")
+print(f"DB_HOST: {env('DB_HOST')}")
+print(f"DB_PORT: {env('DB_PORT')}")
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env("DB_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
