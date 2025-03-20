@@ -21,19 +21,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     DEBUG=(bool, False)
 )
-environ.Env.read_env()
+
+
+# Read the .env file
+env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_path):
+    environ.Env.read_env(env_path)
+else:
+    raise Exception(f".env file not found at {env_path}")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-*yq95v&sfs5i$=^^-jhg(dfb-ebm=wsy59s7+djs(n)_@_jv_*'
-SECRET_KEY = env("SECRET_KEY", default="fallback-secret-key")
+SECRET_KEY = 'django-insecure-*yq95v&sfs5i$=^^-jhg(dfb-ebm=wsy59s7+djs(n)_@_jv_*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = env.bool("DEBUG", default=True)
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -47,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'testdb',
 ]
 
 MIDDLEWARE = [
@@ -94,12 +100,7 @@ WSGI_APPLICATION = 'postgresTest.wsgi.application'
 
 
 ## PostgreSQL database
-print(f"SECRET_KEY: {env('SECRET_KEY')}")
-print(f"DB_NAME: {env('DB_NAME')}")
-print(f"DB_USER: {env('DB_USER')}")
-print(f"DB_PASSWORD: {env('DB_PASSWORD')}")
-print(f"DB_HOST: {env('DB_HOST')}")
-print(f"DB_PORT: {env('DB_PORT')}")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
